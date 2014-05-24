@@ -41,6 +41,7 @@ import Data.Monoid hiding ((<>))
 import Data.Semigroup
 import Data.MemoTrie
 
+import qualified Test.QuickCheck as QC
 import Data.Typeable
 
 type Traced m = TracedT m Identity
@@ -106,3 +107,6 @@ listens g = tracedT . fmap (\f m -> (f m, g m)) . runTracedT
 censor :: (Functor w, HasTrie m) => (m -> m) -> TracedT m w a -> TracedT m w a
 censor g = tracedT . fmap (. g) . runTracedT
 
+
+instance (QC.CoArbitrary m, HasTrie m, QC.Arbitrary a) => QC.Arbitrary (Traced m a) where
+  arbitrary = TracedT . Identity . trie <$> QC.arbitrary

@@ -36,12 +36,15 @@ import Control.Comonad.Trans.Class
 import Control.Comonad.Store.Class
 import Control.Comonad.Env.Class
 import Control.Comonad.Traced.Class
+import Control.Comonad.Traced.MemoTrie
 import Data.Functor.Identity
 import Data.Functor.Apply
 import Data.MemoTrie
 import Data.Semigroup
 import Data.Functor.Extend
 import Data.Monoid hiding ((<>))
+
+import qualified Test.QuickCheck as QC
 
 type Store s = StoreT s Identity
 
@@ -93,3 +96,8 @@ instance (ComonadTraced m w, HasTrie s) => ComonadTraced m (StoreT s w) where
 
 instance (ComonadEnv m w, HasTrie s) => ComonadEnv m (StoreT s w) where 
   ask = ask . lower
+
+instance (Functor w, QC.Arbitrary (w (Traced s a)), QC.Arbitrary s)
+               => QC.Arbitrary (StoreT s w a) where
+  arbitrary = StoreT <$> (fmap (\(TracedT (Identity q))->q)<$>QC.arbitrary)
+                     <*> QC.arbitrary

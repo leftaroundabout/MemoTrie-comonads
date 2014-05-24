@@ -39,7 +39,8 @@ library
     distributive         >= 0.3.2 && < 1,
     semigroupoids        >= 4     && < 6,
     transformers         >= 0.2   && < 0.6,
-    MemoTrie             >= 0.4.9 && < 0.7
+    MemoTrie             >= 0.4.9 && < 0.7,
+    QuickCheck           >= 2.10 && < 2.20
 
   exposed-modules:
     Control.Comonad.Store.MemoTrie
