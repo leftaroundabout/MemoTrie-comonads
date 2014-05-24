@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP, TypeOperators, FlexibleInstances, MultiParamTypeClasses, UndecidableInstances #-}
+{-# LANGUAGE StandaloneDeriving #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Comonad.Store.MemoTrie
@@ -55,6 +56,8 @@ runStore :: HasTrie s => Store s a -> (s -> a, s)
 runStore (StoreT (Identity f) s) = (untrie f, s)
 
 data StoreT s w a = StoreT (w (s :->: a)) s
+deriving instance (Eq (w (s :->: a)), Eq s) => Eq (StoreT s w a)
+deriving instance (Show (w (s :->: a)), Show s) => Show (StoreT s w a)
 
 storeT :: (Functor w, HasTrie s) => w (s -> a) -> s -> StoreT s w a 
 storeT wf s = StoreT (trie <$> wf) s
