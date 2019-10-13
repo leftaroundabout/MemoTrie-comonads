@@ -1,14 +1,14 @@
-name:          comonad-extras
+name:          MemoTrie-comonad
 category:      Control, Comonads
 version:       4.0
 license:       BSD3
 cabal-version: >= 1.6
 license-file:  LICENSE
 author:        Edward A. Kmett
-maintainer:    Edward A. Kmett <ekmett@gmail.com>
+maintainer:    Justus Sagemüller <(@) jsag $ hvl.no>
 stability:     experimental
-homepage:      http://github.com/ekmett/comonad-extras/
-bug-reports:   http://github.com/ekmett/comonad-extras/issues
+homepage:      http://github.com/leftaroundabout/MemoTrie-comonad
+bug-reports:   http://github.com/leftaroundabout/MemoTrie-comonad/issues
 copyright:     Copyright (C) 2011-2013 Edward A. Kmett
 synopsis:      Exotic comonad transformers
 description:   Exotic comonad transformers
@@ -17,7 +17,7 @@ extra-source-files: .travis.yml
 
 source-repository head
   type: git
-  location: git://github.com/ekmett/comonad-extras.git
+  location: git://github.com/leftaroundabout/MemoTrie-comonad.git
 
 library
   hs-source-dirs: src
@@ -42,8 +42,6 @@ library
     MemoTrie             >= 0.4.9 && < 0.7
 
   exposed-modules:
-    Control.Comonad.Store.Zipper
-    Control.Comonad.Store.Pointer
     Control.Comonad.Store.MemoTrie
     Control.Comonad.Traced.MemoTrie
 
