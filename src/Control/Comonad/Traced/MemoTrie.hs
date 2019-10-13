@@ -38,7 +38,8 @@ import Control.Comonad.Traced.Class
 import Data.Functor
 import Data.Functor.Apply
 import Data.Functor.Identity
-import Data.Monoid
+import Data.Functor.Extend
+import Data.Monoid hiding ((<>))
 import Data.Semigroup
 import Data.MemoTrie
 
@@ -74,8 +75,8 @@ instance (Applicative w, HasTrie m) => Applicative (TracedT m w) where
   TracedT wf <*> TracedT wa = TracedT ((<*>) <$> wf <*> wa)
 
 instance (Extend w, Semigroup m, HasTrie m) => Extend (TracedT m w) where
-  extend f = TracedT 
-           . extend (trie . (\wf m -> f (TracedT (inTrie (. (<>) m) <$> wf)))) 
+  extended f = TracedT 
+           . extended (trie . (\wf m -> f (TracedT (inTrie (. (<>) m) <$> wf)))) 
            . untracedT
 
 instance (Comonad w, Semigroup m, Monoid m, HasTrie m) => Comonad (TracedT m w) where
@@ -85,7 +86,7 @@ instance (Semigroup m, Monoid m, HasTrie m) => ComonadTrans (TracedT m) where
   lower = fmap (`untrie` mempty) . untracedT
 
 instance (Semigroup m, Monoid m, HasTrie m) => ComonadHoist (TracedT m) where
-  cohoist = TracedT . Identity . extract . untracedT
+  cohoist g = TracedT . g . untracedT
 
 instance (ComonadStore s w, Semigroup m, Monoid m, HasTrie m) => ComonadStore s (TracedT m w) where
   pos = pos . lower
@@ -107,18 +108,3 @@ listens g = tracedT . fmap (\f m -> (f m, g m)) . runTracedT
 censor :: (Functor w, HasTrie m) => (m -> m) -> TracedT m w a -> TracedT m w a
 censor g = tracedT . fmap (. g) . runTracedT
 
-#ifdef __GLASGOW_HASKELL__
-
-instance (Typeable s, Typeable1 w) => Typeable1 (TracedT s w) where
-  typeOf1 dswa = mkTyConApp tracedTTyCon [typeOf (s dswa), typeOf1 (w dswa)]
-    where
-      s :: TracedT s w a -> s
-      s = undefined
-      w :: TracedT s w a -> w a
-      w = undefined
-
-tracedTTyCon :: TyCon
-tracedTTyCon = mkTyCon "Control.Comonad.Trans.Traced.TracedT"
-{-# NOINLINE tracedTTyCon #-}
-
-#endif

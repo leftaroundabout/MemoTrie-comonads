@@ -40,25 +40,8 @@ import Data.Functor.Identity
 import Data.Functor.Apply
 import Data.MemoTrie
 import Data.Semigroup
-import Data.Monoid
-
-#ifdef __GLASGOW_HASKELL__
-import Data.Typeable
-instance (Typeable s, Typeable1 w) => Typeable1 (StoreT s w) where
-  typeOf1 dswa = mkTyConApp storeTTyCon [typeOf (s dswa), typeOf1 (w dswa)]
-    where
-      s :: StoreT s w a -> s
-      s = undefined
-      w :: StoreT s w a -> w a
-      w = undefined
-
-instance (Typeable s, Typeable1 w, Typeable a) => Typeable (StoreT s w a) where
-  typeOf = typeOfDefault
-
-storeTTyCon :: TyCon
-storeTTyCon = mkTyCon "Control.Comonad.Trans.Store.Strict.StoreT"
-{-# NOINLINE storeTTyCon #-}
-#endif
+import Data.Functor.Extend
+import Data.Monoid hiding ((<>))
 
 type Store s = StoreT s Identity
 
@@ -87,7 +70,7 @@ instance (Applicative w, Semigroup s, Monoid s, HasTrie s) => Applicative (Store
   StoreT ff m <*> StoreT fa n = StoreT ((<*>) <$> ff <*> fa) (m `mappend` n)
 
 instance (Extend w, HasTrie s) => Extend (StoreT s w) where
-  duplicate (StoreT wf s) = StoreT (extend (trie . StoreT) wf) s
+  duplicated (StoreT wf s) = StoreT (extended (trie . StoreT) wf) s
 
 instance (Comonad w, HasTrie s) => Comonad (StoreT s w) where
   extract (StoreT wf s) = untrie (extract wf) s
@@ -96,7 +79,7 @@ instance HasTrie s => ComonadTrans (StoreT s) where
   lower (StoreT f s) = fmap (`untrie` s) f
 
 instance ComonadHoist (StoreT s) where
-  cohoist (StoreT f s) = StoreT (Identity (extract f)) s
+  cohoist t (StoreT f s) = StoreT (t f) s
 
 instance (Comonad w, HasTrie s) => ComonadStore s (StoreT s w) where
   pos (StoreT _ s) = s
