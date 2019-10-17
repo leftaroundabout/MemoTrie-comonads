@@ -1,6 +1,6 @@
-name:          MemoTrie-comonad
+name:          MemoTrie-comonads
 category:      Control, Comonads
-version:       4.0
+version:       0.1.0.0
 license:       BSD3
 cabal-version: >= 1.6
 license-file:  LICENSE
