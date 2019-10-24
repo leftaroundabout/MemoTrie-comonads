@@ -28,14 +28,12 @@ module Control.Comonad.Traced.MemoTrie
   ) where
 
 import Control.Applicative
-import Control.Monad.Instances
 import Control.Comonad
 import Control.Comonad.Hoist.Class
 import Control.Comonad.Trans.Class
 import Control.Comonad.Store.Class
 import Control.Comonad.Env.Class
 import Control.Comonad.Traced.Class
-import Data.Functor
 import Data.Functor.Apply
 import Data.Functor.Identity
 import Data.Functor.Extend
