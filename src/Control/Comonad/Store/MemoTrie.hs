@@ -80,6 +80,7 @@ instance (Extend w, HasTrie s) => Extend (StoreT s w) where
 
 instance (Comonad w, HasTrie s) => Comonad (StoreT s w) where
   extract (StoreT wf s) = untrie (extract wf) s
+  duplicate (StoreT wf s) = StoreT (extend (trie . StoreT) wf) s
 
 instance HasTrie s => ComonadTrans (StoreT s) where
   lower (StoreT f s) = fmap (`untrie` s) f
