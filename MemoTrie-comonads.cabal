@@ -2,7 +2,7 @@ name:          MemoTrie-comonads
 category:      Control, Comonads
 version:       0.1.0.0
 license:       BSD3
-cabal-version: >= 1.6
+cabal-version: >= 1.8
 license-file:  LICENSE
 author:        Edward A. Kmett
 maintainer:    Justus Sagemüller <(@) jsag $ hvl.no>
@@ -48,3 +48,14 @@ library
 
   ghc-options: -Wall
   hs-source-dirs: src
+
+test-suite tasty
+  main-is:         test.hs
+  type:            exitcode-stdio-1.0
+  hs-source-dirs:  test/tasty
+  build-depends:   base
+                   , QuickCheck
+                   , tasty, tasty-quickcheck
+                   , comonad, MemoTrie-comonads
+  ghc-options: -threaded "-with-rtsopts -N8 -M2G"
+  default-language:    Haskell2010
