@@ -101,7 +101,17 @@ instance (ComonadTraced m w, HasTrie s) => ComonadTraced m (StoreT s w) where
 instance (ComonadEnv m w, HasTrie s) => ComonadEnv m (StoreT s w) where 
   ask = ask . lower
 
+zipWith' :: (a -> b -> c) -> (a -> c) -> (b -> c) -> [a] -> [b] -> [c]
+zipWith' _ fa _ la [] = fa<$>la
+zipWith' _ _ fb [] lb = fb<$>lb
+zipWith' f fa fb (a:la) (b:lb) = f a b : zipWith' f fa fb la lb
+
 instance (Functor w, QC.Arbitrary (w (Traced s a)), QC.Arbitrary s)
                => QC.Arbitrary (StoreT s w a) where
   arbitrary = StoreT <$> (fmap (\(TracedT (Identity q))->q)<$>QC.arbitrary)
                      <*> QC.arbitrary
+  shrink (StoreT g s) = zipWith' StoreT (`StoreT`s) (StoreT g)
+                         (map (fmap $ \(TracedT (Identity q))->q)
+                            . QC.shrink $ fmap (TracedT . Identity) g)
+                         (QC.shrink s)
+
